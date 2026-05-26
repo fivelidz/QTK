@@ -2,6 +2,67 @@
 
 **Last updated:** 2026-05-26
 
+## Public release — v0.3.0 ready
+
+Initial public release prepared:
+
+- ✅ Repo fully sanitized for public visibility (no secrets, no personal paths)
+- ✅ Reframed as opencode plugin (not qalcode2-specific) — works on any
+  `@opencode-ai/plugin`-compatible host
+- ✅ README rewritten as a launch document with concrete savings numbers,
+  install steps, and architecture diagram
+- ✅ Project entry added to qalarc.com `projects.json` (slug: `qtk`,
+  category: "Developer Tools / AI Infrastructure", featured)
+- ✅ Two-post blog launch: `qtk-layman.html` + `qtk-technical.html` under
+  `posts/ai-systems/` on qalarc.ai/blog (built and verified)
+- ✅ Local git repo initialized, single coherent initial commit,
+  tagged `v0.3.0`
+- 🟡 Awaiting user confirmation to push to GitHub
+- 🟡 Awaiting user confirmation to deploy qalarc-blog with the new posts
+
+### Vital stats
+
+| Metric                    | Value                                        |
+| ------------------------- | -------------------------------------------- |
+| Tests passing             | **111** (89 TS + 22 Rust), 0 failing         |
+| Test assertions           | 208                                          |
+| Source files committed    | 66                                           |
+| Total LOC                 | 6,412 TS + 1,406 Rust + 3,303 Markdown       |
+| TS plugin bundle          | 73.42 KB                                     |
+| Rust sidecar binary       | 1.98 MB stripped release build               |
+| Network code              | **zero** — both TS and Rust                  |
+| Best compression case     | 98.7% (Read tool on 500-line file)           |
+| Sidecar throughput        | 7,721–13,732 ops/s serial, peak 32,994 ops/s |
+| Sidecar cold start        | 2.4 ms (target was 30 ms)                    |
+| Phases shipped            | 1, 2, 3 (of 6)                               |
+
+### How to push to GitHub (when ready)
+
+```bash
+cd /home/fivelidz/projects/QTK
+
+# Option A: gh CLI creates the repo and pushes in one go
+gh repo create fivelidz/QTK --public --source . --remote origin --push \
+  --description "Deterministic token compression for opencode-based AI coding agents"
+git push origin v0.3.0
+
+# Option B: manually, if you want to inspect first
+gh repo create fivelidz/QTK --public --description "..."
+git remote add origin https://github.com/fivelidz/QTK
+git push -u origin main
+git push origin v0.3.0
+```
+
+### How to deploy qalarc-blog with the new posts
+
+```bash
+cd /home/fivelidz/projects/qalarc-blog
+python3 scripts/gen_posts_data.py && python3 scripts/build.py
+# Then copy/deploy as per DEPLOY.md (Option A standalone or Option B subroute)
+```
+
+---
+
 ## Phase 3 — Rust sidecar `qtk-core` — working
 
 ### What's done in Phase 3
