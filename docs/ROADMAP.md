@@ -344,7 +344,7 @@ obvious. RTK already exists for this need.
 
 - [x] Tag `v0.1.0` once Phase 1 acceptance criteria are met — internal tag
 - [ ] Tag `v0.3.0` covering Phase 1 + 2 + 3 — coincides with first GitHub push
-- [ ] Publish `@qtk/plugin` to npm under MIT license
+- [ ] Publish `@qalarc/qtk-plugin` to npm under MIT license
 - [ ] Announce on the opencode community channels
 - [ ] Submit PR to opencode docs adding a "QTK" section
 

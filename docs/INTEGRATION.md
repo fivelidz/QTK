@@ -75,10 +75,10 @@ Once published:
 
 ```bash
 cd "$OC"
-bun add @qtk/plugin
+bun add @qalarc/qtk-plugin
 
 # In opencode.jsonc:
-#   "@qtk/plugin"
+#   "@qalarc/qtk-plugin"
 ```
 
 ---

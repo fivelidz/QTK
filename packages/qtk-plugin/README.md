@@ -1,4 +1,4 @@
-# @qtk/plugin
+# @qalarc/qtk-plugin
 
 > opencode plugin for deterministic, in-process token compression of tool
 > outputs. Downstream of [RTK (rtk-ai/rtk)](https://github.com/rtk-ai/rtk).
@@ -19,7 +19,7 @@ Google Antigravity) and ships a 100+ filter corpus.
 
 ```bash
 cd /path/to/your/opencode-project
-bun add @qtk/plugin
+bun add @qalarc/qtk-plugin
 ```
 
 Then register it in `.opencode/opencode.jsonc`:
@@ -27,7 +27,7 @@ Then register it in `.opencode/opencode.jsonc`:
 ```jsonc
 {
   "plugin": [
-    "@qtk/plugin"
+    "@qalarc/qtk-plugin"
   ]
 }
 ```

@@ -1,6 +1,6 @@
 {
-  "name": "@qtk/plugin",
-  "version": "0.3.0",
+  "name": "@qalarc/qtk-plugin",
+  "version": "0.3.1",
   "description": "opencode plugin: deterministic, in-process token compression for tool outputs. Downstream of RTK (rtk-ai/rtk).",
   "type": "module",
   "main": "dist/index.js",

@@ -48,7 +48,7 @@ eliminates this surface entirely. If you `rg -i "spawn|exec|eval|Function\(" qtk
 ### 2. QTK has no network code
 
 Not opt-in, not opt-out. There is no HTTP client, no fetch call, no socket
-open. `package.json` of `@qtk/plugin` has no `axios`, no `node-fetch`, no
+open. `package.json` of `@qalarc/qtk-plugin` has no `axios`, no `node-fetch`, no
 `undici`, no `ureq`-equivalent. If you grep the source for `fetch(`,
 `http://`, `https://`, you should get only doc-comment references.
 

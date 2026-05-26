@@ -10,8 +10,8 @@
       },
     },
     "packages/qtk-plugin": {
-      "name": "@qtk/plugin",
-      "version": "0.1.0",
+      "name": "@qalarc/qtk-plugin",
+      "version": "0.3.1",
       "devDependencies": {
         "@opencode-ai/plugin": "^1.1.21",
         "@types/bun": "latest",
@@ -39,7 +39,7 @@
 
     "@opencode-ai/sdk": ["@opencode-ai/sdk@1.15.6", "", { "dependencies": { "cross-spawn": "7.0.6" } }, "sha512-zeMyjgf7jjp4ge7Y9mp1oza1nHsKZAmOg9RIFixRtrM9S1IPwgNMEybMlJR+wBwPTv2ZDgjvcJasuD0z4XjSDA=="],
 
-    "@qtk/plugin": ["@qtk/plugin@workspace:packages/qtk-plugin"],
+    "@qalarc/qtk-plugin": ["@qalarc/qtk-plugin@workspace:packages/qtk-plugin"],
 
     "@standard-schema/spec": ["@standard-schema/spec@1.1.0", "", {}, "sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w=="],
 

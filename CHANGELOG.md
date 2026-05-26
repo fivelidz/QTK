@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+(none — most recent changes shipped in 0.3.1)
+
+## [0.3.1] — 2026-05-26
+
+First post-public-release version. No behaviour changes; everything in
+this version is infrastructure + community + the org migration.
+
 ### Added
 
 - `--help`, `--version`, `--list-compressors` flags on `qtk-core` binary so it
@@ -18,12 +25,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `x86_64-unknown-linux-musl`, `aarch64-unknown-linux-musl`,
   `x86_64-apple-darwin`, `aarch64-apple-darwin`, plus the TS plugin bundle,
   and attaches all artifacts to the GitHub release.
+- Community files: issue templates (bug + feature), PR template, FUNDING.yml
+  redirecting funding interest to upstream RTK, top-level `SECURITY.md`
+  with coordinated-disclosure policy.
+- npm-publishable scaffolding for the qtk-plugin package (homepage,
+  repository, bugs, keywords, files allowlist; `npm pack --dry-run`
+  produces a 70 KB tarball).
+- Bulk-imported all 59 RTK filters from rtk-ai/rtk (Apache-2.0) into
+  `packages/qtk-filters/imported/` with full per-file attribution.
+- Cost-aware analytics: `pricing.ts` model table, `savings-export.ts`
+  writing `<project>/.opencode/qtk-savings.json` every 10s, `qtk gain
+  --model=<id>` CLI with USD-saved columns + extrapolation.
+- gmux integration across 3 surfaces (tmux status bar, phone PWA card,
+  Tauri desktop UI perf strip + per-pane HW row + footer badge).
 - `CHANGELOG.md` (this file).
 
 ### Changed
 
 - `cargo fmt` formatting applied across `qtk-core` so CI's
   `cargo fmt --all -- --check` passes.
+- **Repository moved** from `github.com/fivelidz/QTK` to
+  `github.com/qalarc/QTK` (transferred to the Qalarc GitHub organisation).
+  All old URLs continue to work via GitHub's automatic transfer redirect.
+- Project renamed from "qalcode-style Token Killer" to **"Qalarc Token
+  Killer"** (with "Quantised Token Killer" as the backronym).
+- README's "Read this first" block + LICENSE attribution NOTICE now
+  fully credit RTK upstream.
 
 ## [0.3.0] — 2026-05-26
 
@@ -123,5 +150,6 @@ If you're not on opencode specifically, [use RTK](https://rtk-ai.app).
 
 ---
 
-[Unreleased]: https://github.com/qalarc/QTK/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/qalarc/QTK/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/qalarc/QTK/releases/tag/v0.3.1
 [0.3.0]: https://github.com/qalarc/QTK/releases/tag/v0.3.0
