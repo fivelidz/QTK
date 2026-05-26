@@ -42,10 +42,34 @@ QTK active — 13 compressors registered
   sidecar:terraform-plan, sidecar:kubectl-structured, sidecar:cargo-json,
   sidecar:junit-xml
 
-Session summary (after 3 hrs of agent work):
-  4,872 tool calls compressed
-  1,247,392 tokens saved (-71.3%)
-  $4.92 of Claude tokens not spent
+$ qtk gain
+────────────────────────────────────────────────────────────────
+QTK savings
+────────────────────────────────────────────────────────────────
+Window:           last 7 days
+Pricing model:    claude-sonnet-4-5  (input $3.00/1M, output $15.00/1M)
+Sessions:         12
+Calls compressed: 4872 (903 cache hits)
+Bytes:            5.1M → 1.3M (74.9% saved)
+Tokens (est):     1.3M → 322k (978k saved)
+Cost saved (est): $2.93
+
+By compressor:
+  name              calls    bytes-in   bytes-out  tok-saved   USD-saved  avg-ratio
+  read-tool           283       1.2M       312k       217k      $0.65     26.5%
+  sidecar:kubectl-st   34       421k        94k        82k      $0.25     22.3%
+  git-status          147       294k        58k        59k      $0.18     19.7%
+  ...
+
+Top 10 commands by tokens saved:
+  command                            calls  tok-saved   USD-saved  avg-ratio
+  read /path/to/...                    283       217k      $0.65     26.5%
+  git status                           147        59k      $0.18     19.7%
+  ...
+
+────────────────────────────────────────────────────────────────
+Extrapolated:     ~140k tokens/day · $0.42/day
+                  $12.55/month · $152.69/year at current rate
 ```
 
 [![tests](https://img.shields.io/badge/tests-111%20passing-brightgreen)](#tests)
@@ -235,6 +259,48 @@ bun run scripts/install-into-opencode.ts /path/to/your/opencode-project
 ```
 
 After install, check `[qtk] active — N compressors registered` in opencode's startup log. See [`docs/INTEGRATION.md`](docs/INTEGRATION.md) for the full guide.
+
+---
+
+## gmux integration — live savings on your status bar
+
+QTK writes a small JSON sidecar at `<project>/.opencode/qtk-savings.json`
+every 10 seconds. The file looks like:
+
+```json
+{
+  "schema": 1,
+  "ts": 1716700000000,
+  "session_id": "...",
+  "totals": {
+    "calls": 4872,
+    "bytes_saved": 3838872,
+    "tokens_saved": 805719,
+    "usd_saved": 2.42,
+    "model": "claude-sonnet-4-5",
+    "pricing": {"inputUsdPer1M": 3.0, "outputUsdPer1M": 15.0}
+  },
+  "by_compressor": [
+    {"name": "read-tool", "calls": 283, "tokens_saved": 217000, "bytes_saved": 1234567},
+    ...
+  ]
+}
+```
+
+[**gmux**](https://github.com/fivelidz/gmux) (the gesture+voice terminal
+multiplexer for fleets of AI agents) reads this file and surfaces
+per-pane and per-session QTK savings:
+
+- **tmux status bar:** `⊟ 855.7k $2.57` widget on the right
+- **Phone PWA:** "⊟ QTK saved 217k tok · $0.65 (283 calls)" per agent card
+- **gmuxtest Tauri UI:** Cost cell in the perf strip + per-pane HW section
+
+Multiple gmux panes pointing at the same opencode instance are deduped
+by port so you don't double-count.
+
+Any other dashboard can read the same sidecar file. Format is stable
+(`schema: 1`); see `packages/qtk-plugin/src/savings-export.ts` for the
+schema definition.
 
 ---
 

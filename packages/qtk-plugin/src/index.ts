@@ -26,6 +26,7 @@ import {
   buildSidecarCompressors,
   type AsyncCompressor,
 } from "./sidecar/compressors.ts";
+import { SavingsExporter } from "./savings-export.ts";
 import type { CompressionOutcome } from "./types.ts";
 
 export const QtkPlugin: Plugin = async ({ directory }) => {
@@ -92,6 +93,15 @@ export const QtkPlugin: Plugin = async ({ directory }) => {
     await stats.init();
   }
 
+  // ─── Savings exporter (cross-tool integration: gmux, dashboards) ─────────
+  // Writes <project>/.opencode/qtk-savings.json every 10s (debounced).
+  // External consumers (gmux status bar, gmuxtest Tauri UI, phone PWA)
+  // read this file to display "QTK saved X tokens ($Y)".
+  //
+  // Sessions get their id from the first tool.execute.after call's
+  // `input.sessionID`. Until that arrives we use a placeholder.
+  const savingsExporter = new SavingsExporter(projectRoot, "unknown");
+
   // ─── Sidecar (Phase 3) — optional Rust binary for heavy parsers ─────────
   let sidecarCompressors: AsyncCompressor[] = [];
   try {
@@ -121,6 +131,13 @@ export const QtkPlugin: Plugin = async ({ directory }) => {
   console.log(`[qtk] active — ${registry.size()} compressors registered`);
   console.log(`[qtk] compressors: ${registry.names().join(", ")}`);
 
+  // Best-effort: flush the savings file when the process is about to exit.
+  // Bun/Node `beforeExit` is the latest hook that's still inside an async
+  // context, so we can await the rename.
+  process.on?.("beforeExit", () => {
+    void savingsExporter.stop();
+  });
+
   return {
     "tool.execute.after": async (input, output) => {
       // Defensive: never throw out of this hook.
@@ -133,6 +150,7 @@ export const QtkPlugin: Plugin = async ({ directory }) => {
           breaker,
           tee,
           stats,
+          savingsExporter,
           dedupTtlMs: config.dedupTtlSeconds * 1000,
           teeMode: config.tee.mode,
         });
@@ -151,6 +169,7 @@ interface ProcessContext {
   breaker: CircuitBreaker;
   tee: TeeWriter | null;
   stats: StatsTracker | null;
+  savingsExporter: SavingsExporter;
   dedupTtlMs: number;
   teeMode: "always" | "failures_and_compressed" | "never";
 }
@@ -183,29 +202,37 @@ async function processCall(
   const fp = ctx.cache.fingerprint(input.tool, args);
   const outHash = ctx.cache.outputHash(raw);
 
+  // Learn the session id from the first hook call (used by the savings exporter)
+  // Best-effort — if input.sessionID isn't set, we just skip.
+  if (input.sessionID) {
+    ctx.savingsExporter.setModelId(extractModelId(output));
+  }
+
   // Cache lookup — same call, same output, within TTL?
   const cacheHit = ctx.cache.lookup(fp, outHash, ctx.dedupTtlMs);
   if (cacheHit) {
     const elapsed = Math.round((Date.now() - cacheHit.ts) / 1000);
     output.output = `<qtk-unchanged tool=${input.tool} since=${elapsed}s_ago>\n${cacheHit.compressed}\n</qtk-unchanged>`;
+    const cacheOutcome: CompressionOutcome = {
+      compressor: "session-cache",
+      originalBytes: raw.length,
+      compressedBytes: output.output.length,
+      originalTokensEst: estimateTokens(raw),
+      compressedTokensEst: estimateTokens(output.output),
+      ratio: output.output.length / raw.length,
+      durationMs: 0,
+      wasCacheHit: true,
+      teeFile: null,
+    };
     if (ctx.stats) {
       ctx.stats.log({
         sessionID: input.sessionID,
         tool: input.tool,
         commandHead: extractCommandHead(input.tool, args),
-        outcome: {
-          compressor: "session-cache",
-          originalBytes: raw.length,
-          compressedBytes: output.output.length,
-          originalTokensEst: estimateTokens(raw),
-          compressedTokensEst: estimateTokens(output.output),
-          ratio: output.output.length / raw.length,
-          durationMs: 0,
-          wasCacheHit: true,
-          teeFile: null,
-        },
+        outcome: cacheOutcome,
       });
     }
+    ctx.savingsExporter.record(cacheOutcome);
     return;
   }
 
@@ -309,19 +336,19 @@ async function processCall(
   // Cache the (raw) hash + the compressed body, so repeats short-circuit
   ctx.cache.put(fp, outHash, compressed);
 
-  // Log to stats
+  // Log to stats + savings export (always — exporter is required)
+  const outcome: CompressionOutcome = {
+    compressor: compressorName,
+    originalBytes: raw.length,
+    compressedBytes: output.output.length,
+    originalTokensEst: estimateTokens(raw),
+    compressedTokensEst: estimateTokens(output.output),
+    ratio,
+    durationMs,
+    wasCacheHit: false,
+    teeFile,
+  };
   if (ctx.stats) {
-    const outcome: CompressionOutcome = {
-      compressor: compressorName,
-      originalBytes: raw.length,
-      compressedBytes: output.output.length,
-      originalTokensEst: estimateTokens(raw),
-      compressedTokensEst: estimateTokens(output.output),
-      ratio,
-      durationMs,
-      wasCacheHit: false,
-      teeFile,
-    };
     ctx.stats.log({
       sessionID: input.sessionID,
       tool: input.tool,
@@ -329,6 +356,7 @@ async function processCall(
       outcome,
     });
   }
+  ctx.savingsExporter.record(outcome);
 }
 
 function extractCommandHead(
@@ -339,6 +367,23 @@ function extractCommandHead(
     return commandHead(args.command);
   }
   return tool.toLowerCase();
+}
+
+/**
+ * Try to read the model id from opencode's tool-call output metadata.
+ * opencode plugins receive an `output.metadata` field which sometimes
+ * contains `model` (and adjacent fields). If we can't find it, returns
+ * null — the savings exporter will use its default pricing.
+ */
+function extractModelId(output: HookOutput): string | null {
+  const meta = output.metadata;
+  if (!meta || typeof meta !== "object") return null;
+  const m = meta as Record<string, unknown>;
+  for (const key of ["model", "modelID", "model_id", "modelId"]) {
+    const v = m[key];
+    if (typeof v === "string" && v.trim()) return v;
+  }
+  return null;
 }
 
 function pathToRelative(abs: string, root: string): string {
