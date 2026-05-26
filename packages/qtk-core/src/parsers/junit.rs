@@ -133,7 +133,7 @@ pub fn compress(input: &str) -> String {
         .saturating_sub(total_failures)
         .saturating_sub(total_errors)
         .saturating_sub(total_skipped);
-    out.push_str(&format!("{passed}/{total_tests} passed",));
+    out.push_str(&format!("{passed}/{total_tests} passed"));
     if total_failures > 0 {
         out.push_str(&format!(", {total_failures} failed"));
     }

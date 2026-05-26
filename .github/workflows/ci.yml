@@ -33,7 +33,7 @@ jobs:
         env:
           CI: "1"
       - name: Build bundle
-        run: bun --cwd packages/qtk-plugin run build
+        run: cd packages/qtk-plugin && bun run build
       - name: Verify bundle size
         run: |
           set -eu

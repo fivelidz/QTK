@@ -13,9 +13,11 @@
     "typescript": "^5.4.0"
   },
   "scripts": {
-    "build": "bun --cwd packages/qtk-plugin run build",
-    "test": "bun --cwd packages/qtk-plugin test",
+    "build": "cd packages/qtk-plugin && bun run build",
+    "test": "bun test",
+    "typecheck": "bun x tsc --noEmit",
     "bench": "bun run scripts/benchmark.ts",
+    "bench:sidecar": "bun run scripts/benchmark-sidecar.ts",
     "install-into-opencode": "bun run scripts/install-into-opencode.ts",
     "import-rtk-filters": "bun run scripts/import-rtk-filters.ts"
   }
