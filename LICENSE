@@ -22,13 +22,39 @@ SOFTWARE.
 
 ---
 
-This project derives architectural ideas (notably the TOML filter DSL format
-for declarative output compression) from:
+## Attribution
+
+This project — QTK ("Qalarc Token Killer", also a backronym for "Quantised
+Token Killer") — derives its core thesis and the TOML filter DSL format
+from:
 
   RTK (Rust Token Killer)
   https://github.com/rtk-ai/rtk
-  Copyright (c) Patrick Szymkowiak and contributors
-  Licensed under MIT.
+  https://rtk-ai.app
+  Copyright (c) Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+                and RTK contributors.
+  Licensed under the Apache License, Version 2.0.
 
-No RTK source code is vendored. Individual filter `.toml` files imported from
-RTK retain their original attribution as a comment in the file.
+RTK is the mature, production project. It supports 13 AI coding tools
+(Claude Code, Cursor, Gemini CLI, Copilot, OpenCode, Codex, Windsurf,
+Cline, Hermes, …), ships a 100+ command filter corpus, has its own
+documented telemetry-with-consent policy, and runs across Linux, macOS,
+and Windows. It proved at scale that AI-agent tool output is
+deterministically compressible without an LLM. **If you are running
+any agent other than opencode, use RTK.**
+
+QTK exists because the opencode plugin surface lets us hook
+`tool.execute.after` in-process, which removes the per-call subprocess
+fork and the system-prompt overhead that any external-CLI tool
+(including RTK) necessarily carries. That trade-off only makes sense
+when you're already committed to opencode. For everything else, RTK is
+both broader and more battle-tested.
+
+QTK's TOML filter DSL is a clean-room implementation that intentionally
+shares user-facing TOML keys with RTK so RTK filters round-trip without
+modification. No RTK source code is vendored in this repository.
+Filters imported via `scripts/import-rtk-filters.ts` retain their
+original Apache-2.0 attribution as a comment in the file header.
+
+Per Apache-2.0 §4(b), this file constitutes the NOTICE for QTK's
+incorporation of architectural ideas from RTK.

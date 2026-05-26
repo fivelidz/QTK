@@ -1,8 +1,24 @@
 # QTK vs RTK — A Detailed Comparison
 
-> RTK is the project that proved deterministic token compression works at
-> scale. QTK is the project that asks: _if we built this specifically for the
-> opencode plugin surface, what would change?_ This doc enumerates every
+> **Read this first:** [RTK](https://github.com/rtk-ai/rtk) is the mature,
+> production-grade project. 54k+ GitHub stars, 185 releases, supports 13
+> AI coding tools across Linux/macOS/Windows, ships a 100+ command filter
+> corpus. It is the project that proved deterministic token compression
+> works at scale. Built by Patrick Szymkowiak, Florian Bruniaux, Adrien
+> Eppling, and the RTK community. Licensed Apache-2.0.
+>
+> **If you're not running opencode specifically, you almost certainly want
+> RTK, not QTK.** RTK supports Claude Code, Cursor, Gemini CLI, GitHub
+> Copilot, Codex, Windsurf, Cline, Roo Code, OpenCode, OpenClaw, Hermes,
+> Kilo Code, Antigravity — basically every serious AI coding agent.
+>
+> QTK is a much narrower project. It asks one question: *if we built this
+> specifically for the opencode plugin surface, what would change?* The
+> answer is "the architectural diff is meaningful enough to merit a
+> separate codebase that we maintain ourselves" — but **the diff is small
+> compared to the conceptual debt to RTK**. The whole thesis comes from
+> RTK. Most of the filter ideas come from RTK. The TOML DSL syntax is
+> RTK-compatible by deliberate design. This doc enumerates every
 > meaningful difference and why we chose each tradeoff.
 
 ---

@@ -1,6 +1,31 @@
-# QTK — qalcode-style Token Killer
+# QTK — Qalarc Token Killer
+
+> Also a backronym for **Q**uantised **T**oken **K**iller — same idea, more descriptive.
 
 **Deterministic token compression for opencode-based AI coding agents.**
+
+> ## Read this first
+>
+> [**RTK (Rust Token Killer)**](https://github.com/rtk-ai/rtk) is the
+> mature, production-grade project for deterministic token compression.
+> 54k+ GitHub stars, 185 releases, supports 13 AI coding tools across
+> Linux/macOS/Windows, ships a 100+ command filter corpus. Built by
+> Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling and the RTK
+> community. Licensed Apache-2.0.
+>
+> **If you're using Claude Code, Cursor, Gemini CLI, GitHub Copilot,
+> Codex, Windsurf, Cline, Roo Code, OpenClaw, Hermes, Kilo Code, or
+> Google Antigravity — use [RTK](https://rtk-ai.app).**
+>
+> **QTK is a narrow opencode-specific spiritual sibling.** It exists
+> because opencode's plugin surface lets us hook `tool.execute.after`
+> in-process, which removes the per-call subprocess fork and the
+> system-prompt overhead any external-CLI tool necessarily carries.
+> That trade-off only makes sense if you're already committed to
+> opencode. The whole project is downstream of RTK — RTK proved the
+> thesis, ships the canonical filter corpus, and is broader and more
+> battle-tested. See [`docs/RTK-COMPARISON.md`](docs/RTK-COMPARISON.md)
+> for the architectural diff.
 
 QTK is an [opencode](https://github.com/sst/opencode) plugin that silently
 compresses tool outputs (`git status`, `ls -la`, `rg`, `pytest`, `cargo test`,

@@ -1,5 +1,10 @@
-// QTK — qalcode-style Token Killer.
+// QTK — Qalarc Token Killer (also a backronym for "Quantised Token Killer").
+//
 // Output-side token compression for opencode (and compatible fork) tool calls.
+//
+// Built downstream of RTK (Rust Token Killer; rtk-ai/rtk) — see
+// docs/RTK-COMPARISON.md for the design diff. RTK proved the thesis at
+// scale and ships the upstream filter corpus QTK imports from.
 //
 // Hooks into `tool.execute.after` and rewrites `result.output` in place.
 // Read docs/ for the full design.
