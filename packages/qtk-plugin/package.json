@@ -1,23 +1,33 @@
 {
   "name": "@qtk/plugin",
-  "version": "0.1.0",
-  "description": "opencode plugin: deterministic, in-process token compression for tool outputs",
+  "version": "0.3.0",
+  "description": "opencode plugin: deterministic, in-process token compression for tool outputs. Downstream of RTK (rtk-ai/rtk).",
   "type": "module",
-  "main": "src/index.ts",
-  "module": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "src/index.ts",
   "exports": {
-    ".": "./src/index.ts",
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./src": "./src/index.ts",
     "./compressors/*": "./src/compressors/*.ts",
     "./tools/*": "./src/tools/*.ts"
   },
   "files": [
+    "dist",
     "src",
-    "README.md"
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "build": "bun build src/index.ts --outdir dist --target bun",
     "test": "bun test",
-    "typecheck": "bun x tsc --noEmit"
+    "typecheck": "bun x tsc --noEmit",
+    "prepublishOnly": "bun run build && bun test"
   },
   "peerDependencies": {
     "@opencode-ai/plugin": "^1.1.0"
@@ -27,5 +37,26 @@
     "@types/bun": "latest",
     "typescript": "^5.4.0"
   },
+  "keywords": [
+    "opencode",
+    "ai-agents",
+    "token-compression",
+    "context-window",
+    "developer-tools",
+    "llm",
+    "claude-code",
+    "plugin",
+    "rtk-derivative"
+  ],
+  "homepage": "https://github.com/fivelidz/QTK",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fivelidz/QTK.git",
+    "directory": "packages/qtk-plugin"
+  },
+  "bugs": {
+    "url": "https://github.com/fivelidz/QTK/issues"
+  },
+  "author": "fivelidz <https://qalarc.com>",
   "license": "MIT"
 }

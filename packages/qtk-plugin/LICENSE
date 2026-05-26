@@ -1,0 +1,60 @@
+MIT License
+
+Copyright (c) 2026 fivelidz
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## Attribution
+
+This project — QTK ("Qalarc Token Killer", also a backronym for "Quantised
+Token Killer") — derives its core thesis and the TOML filter DSL format
+from:
+
+  RTK (Rust Token Killer)
+  https://github.com/rtk-ai/rtk
+  https://rtk-ai.app
+  Copyright (c) Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+                and RTK contributors.
+  Licensed under the Apache License, Version 2.0.
+
+RTK is the mature, production project. It supports 13 AI coding tools
+(Claude Code, Cursor, Gemini CLI, Copilot, OpenCode, Codex, Windsurf,
+Cline, Hermes, …), ships a 100+ command filter corpus, has its own
+documented telemetry-with-consent policy, and runs across Linux, macOS,
+and Windows. It proved at scale that AI-agent tool output is
+deterministically compressible without an LLM. **If you are running
+any agent other than opencode, use RTK.**
+
+QTK exists because the opencode plugin surface lets us hook
+`tool.execute.after` in-process, which removes the per-call subprocess
+fork and the system-prompt overhead that any external-CLI tool
+(including RTK) necessarily carries. That trade-off only makes sense
+when you're already committed to opencode. For everything else, RTK is
+both broader and more battle-tested.
+
+QTK's TOML filter DSL is a clean-room implementation that intentionally
+shares user-facing TOML keys with RTK so RTK filters round-trip without
+modification. No RTK source code is vendored in this repository.
+Filters imported via `scripts/import-rtk-filters.ts` retain their
+original Apache-2.0 attribution as a comment in the file header.
+
+Per Apache-2.0 §4(b), this file constitutes the NOTICE for QTK's
+incorporation of architectural ideas from RTK.
