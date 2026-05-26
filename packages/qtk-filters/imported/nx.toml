@@ -1,0 +1,20 @@
+# Imported from rtk-ai/rtk src/filters/nx.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact Nx monorepo output — strip task graph noise, keep results"
+
+command = "(pnpm\\s+)?nx"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^\\s*$",
+  "^\\s*>\\s*NX\\s+Running target",
+  "^\\s*>\\s*NX\\s+Nx read the output",
+  "^\\s*>\\s*NX\\s+View logs",
+  "^———————",
+  "^—————————",
+  "^\\s+Nx \\(powered by",
+]
+# RTK: truncate_lines_at = 150  (not yet supported by QTK — review)
+truncate = 60

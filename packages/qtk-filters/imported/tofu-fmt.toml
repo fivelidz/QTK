@@ -1,0 +1,11 @@
+# Imported from rtk-ai/rtk src/filters/tofu-fmt.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact OpenTofu fmt output"
+
+command = "tofu\\s+fmt(\\s|$)"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+on_empty = "tofu fmt: ok (no changes)"
+truncate = 30

@@ -1,0 +1,20 @@
+# Imported from rtk-ai/rtk src/filters/turbo.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact Turborepo output — strip cache status noise, keep task results"
+
+command = "turbo"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^\\s*$",
+  "^\\s*cache (hit|miss|bypass)",
+  "^\\s*\\d+ packages in scope",
+  "^\\s*Tasks:\\s+\\d+",
+  "^\\s*Duration:\\s+",
+  "^\\s*Remote caching (enabled|disabled)",
+]
+# RTK: truncate_lines_at = 150  (not yet supported by QTK — review)
+truncate = 50
+on_empty = "turbo: ok"

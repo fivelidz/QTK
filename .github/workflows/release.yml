@@ -1,0 +1,148 @@
+name: Release
+
+# Triggered when a semver tag `vX.Y.Z` is pushed.
+# Builds prebuilt qtk-core binaries for Linux x86_64, Linux aarch64,
+# macOS x86_64, and macOS aarch64; attaches them to the GitHub release;
+# also builds the qtk-plugin TS bundle and attaches it as `qtk-plugin.js`.
+#
+# This lets users without a Rust toolchain still drop the binary into
+# their `.opencode/plugin/` directory and get Phase 3 working.
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to build (e.g. v0.3.0)"
+        required: true
+
+permissions:
+  contents: write  # needed to upload release artifacts
+
+jobs:
+  build-binary:
+    name: Build qtk-core (${{ matrix.target }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-musl
+            os: ubuntu-latest
+            cross: true
+          - target: aarch64-unknown-linux-musl
+            os: ubuntu-latest
+            cross: true
+          - target: x86_64-apple-darwin
+            os: macos-13
+            cross: false
+          - target: aarch64-apple-darwin
+            os: macos-14
+            cross: false
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - name: Install cross (Linux only)
+        if: matrix.cross == true
+        run: cargo install cross --locked --version 0.2.5
+      - name: Build (cross)
+        if: matrix.cross == true
+        working-directory: packages/qtk-core
+        run: cross build --release --target ${{ matrix.target }}
+      - name: Build (native)
+        if: matrix.cross == false
+        working-directory: packages/qtk-core
+        run: cargo build --release --target ${{ matrix.target }}
+      - name: Package
+        working-directory: packages/qtk-core
+        run: |
+          set -eu
+          mkdir -p ../../dist
+          BIN="target/${{ matrix.target }}/release/qtk-core"
+          if [ -f "$BIN" ]; then
+            cp "$BIN" "../../dist/qtk-core-${{ matrix.target }}"
+            chmod +x "../../dist/qtk-core-${{ matrix.target }}"
+          else
+            echo "ERROR: binary not found at $BIN" >&2
+            ls -la target/${{ matrix.target }}/release/ || true
+            exit 1
+          fi
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qtk-core-${{ matrix.target }}
+          path: dist/qtk-core-${{ matrix.target }}
+          if-no-files-found: error
+
+  build-bundle:
+    name: Build qtk-plugin bundle
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.6"
+      - run: bun install --frozen-lockfile
+      - run: bun --cwd packages/qtk-plugin run build
+      - name: Rename for release
+        run: |
+          mkdir -p dist
+          cp packages/qtk-plugin/dist/index.js dist/qtk-plugin.js
+      - uses: actions/upload-artifact@v4
+        with:
+          name: qtk-plugin-bundle
+          path: dist/qtk-plugin.js
+          if-no-files-found: error
+
+  release:
+    name: Attach to GitHub Release
+    needs: [build-binary, build-bundle]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Flatten artifacts
+        run: |
+          set -eu
+          mkdir -p release-assets
+          find artifacts -type f -exec cp -v {} release-assets/ \;
+          ls -la release-assets/
+      - name: Upload to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release-assets/qtk-core-x86_64-unknown-linux-musl
+            release-assets/qtk-core-aarch64-unknown-linux-musl
+            release-assets/qtk-core-x86_64-apple-darwin
+            release-assets/qtk-core-aarch64-apple-darwin
+            release-assets/qtk-plugin.js
+          fail_on_unmatched_files: false
+          body: |
+            Prebuilt artifacts for this QTK release.
+
+            **qtk-core** binaries — drop into `<your-opencode-project>/.opencode/plugin/qtk-core`
+            and `chmod +x`. Plugin will auto-discover them. If your platform isn't
+            listed below, `cd packages/qtk-core && cargo build --release` from a
+            local checkout.
+
+            **qtk-plugin.js** — pre-bundled TS plugin. Single file, drop into
+            `<your-opencode-project>/.opencode/plugin/qtk.js` and reference it
+            from `opencode.jsonc` as `file://.opencode/plugin/qtk.js`.
+
+            **Verifying**: download and run `qtk-core --help` to confirm the
+            binary works on your platform. (It will print the hello JSON line
+            and exit on stdin EOF.)
+
+            See [CHANGELOG.md](https://github.com/fivelidz/QTK/blob/main/CHANGELOG.md)
+            for what's in this release.

@@ -1,0 +1,17 @@
+# Imported from rtk-ai/rtk src/filters/bundle-install.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact bundle install/update — strip 'Using' lines, keep installs and errors"
+
+command = "bundle\\s+(install|update)"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^Using ",
+  "^\\s*$",
+  "^Fetching gem metadata",
+  "^Resolving dependencies",
+]
+# RTK: match_output = [...]  (multi-line; not yet supported by QTK — review)
+truncate = 30

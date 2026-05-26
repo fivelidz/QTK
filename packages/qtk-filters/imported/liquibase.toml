@@ -1,0 +1,26 @@
+# Imported from rtk-ai/rtk src/filters/liquibase.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact liquibase output — strip headers and generic info"
+
+command = "(?:^|/)liquibase(?:\\s|$)"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+filter_stderr = true
+strip = [
+  "^\\s*$",
+  "^Starting Liquibase at",
+  "^Liquibase (?:Community|Open Source)",
+  "^Liquibase Home:",
+  "^Java Home",
+  "^Libraries:",
+  "^\\s*-\\s+\\S+\\.jar",
+  "^INFO \\[liquibase\\.integration\\]",
+  "^INFO \\[liquibase\\.core\\] Reading resource",
+  "^INFO \\[liquibase\\.core\\] Parsing",
+  "^(?:\\[?INFO\\]?\\s*)?#+$",
+  "^\\s*##"
+]
+on_empty = "liquibase: ok"
+truncate = 200

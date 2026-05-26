@@ -1,0 +1,25 @@
+# Imported from rtk-ai/rtk src/filters/gradle.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact Gradle build output — strip progress, keep tasks and errors"
+
+command = "(gradle|gradlew|\\./)gradlew?"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^\\s*$",
+  "^> Configuring project",
+  "^> Resolving dependencies",
+  "^> Transform ",
+  "^Download(ing)?\\s+http",
+  "^\\s*<-+>\\s*$",
+  "^> Task :.*UP-TO-DATE$",
+  "^> Task :.*NO-SOURCE$",
+  "^> Task :.*FROM-CACHE$",
+  "^Starting a Gradle Daemon",
+  "^Daemon will be stopped",
+]
+# RTK: truncate_lines_at = 150  (not yet supported by QTK — review)
+truncate = 50
+on_empty = "gradle: ok"

@@ -1,0 +1,13 @@
+# Imported from rtk-ai/rtk src/filters/shellcheck.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact shellcheck output — strip blank lines, keep caret indicators for error position"
+
+command = "shellcheck"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^\\s*$",
+]
+truncate = 50

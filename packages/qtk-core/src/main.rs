@@ -24,7 +24,58 @@ use protocol::{Hello, Request, Response};
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
+const HELP_TEXT: &str = r#"qtk-core — Qalarc Token Killer Rust sidecar.
+
+USAGE:
+    qtk-core                   Run as a long-lived NDJSON server reading stdin,
+                               writing responses to stdout. This is how the QTK
+                               opencode plugin uses it.
+
+    qtk-core --help|-h         Print this help and exit.
+    qtk-core --version|-V      Print version and exit.
+    qtk-core --list-compressors
+                               Print supported compressor names (one per line)
+                               and exit. Useful for shell-side validation.
+
+PROTOCOL (NDJSON, one JSON line per request and response):
+    Request:  {"id":<u64>, "compressor":"<name>", "input":"<text>"}
+    Response: {"id":<u64>, "ok":true,  "output":"<text>", "ratio":<f32>}
+          or  {"id":<u64>, "ok":false, "error":"<msg>"}
+
+On startup, emits one unsolicited line:
+    {"kind":"hello", "version":"<v>", "compressors":[...]}
+
+For full documentation see https://github.com/fivelidz/QTK
+"#;
+
 fn main() {
+    // Argument handling — only flags, no positional args. We accept at
+    // most one flag (the flags all terminate the process).
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    if let Some(arg) = args.first() {
+        match arg.as_str() {
+            "-h" | "--help" => {
+                println!("{HELP_TEXT}");
+                return;
+            }
+            "-V" | "--version" => {
+                println!("qtk-core {VERSION}");
+                return;
+            }
+            "--list-compressors" => {
+                for c in parsers::names() {
+                    println!("{c}");
+                }
+                return;
+            }
+            other => {
+                eprintln!("qtk-core: unknown argument: {other}");
+                eprintln!("(try --help)");
+                std::process::exit(2);
+            }
+        }
+    }
+
     let stdin = io::stdin().lock();
     let mut stdout = io::stdout().lock();
 

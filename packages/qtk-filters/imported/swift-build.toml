@@ -1,0 +1,16 @@
+# Imported from rtk-ai/rtk src/filters/swift-build.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact swift build output — short-circuit on success, strip Compiling/Linking"
+
+command = "swift\\s+build"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^\\s*$",
+  "^Compiling ",
+  "^Linking ",
+]
+# RTK: match_output = [...]  (multi-line; not yet supported by QTK — review)
+truncate = 40

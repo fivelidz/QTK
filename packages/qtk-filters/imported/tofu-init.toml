@@ -1,0 +1,20 @@
+# Imported from rtk-ai/rtk src/filters/tofu-init.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact OpenTofu init output"
+
+command = "tofu\\s+init(\\s|$)"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^- Downloading",
+  "^- Installing",
+  "^- Using previously-installed",
+  "^\\s*$",
+  "^Initializing provider",
+  "^Initializing the backend",
+  "^Initializing modules",
+]
+truncate = 20
+on_empty = "tofu init: ok"

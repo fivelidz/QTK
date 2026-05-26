@@ -1,0 +1,17 @@
+# Imported from rtk-ai/rtk src/filters/task.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact go-task output — strip task headers, keep command results"
+
+command = "task"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^\\s*$",
+  "^task: \\[.*\\] ",
+  "^task: Task .* is up to date",
+]
+# RTK: truncate_lines_at = 150  (not yet supported by QTK — review)
+truncate = 50
+on_empty = "task: ok"

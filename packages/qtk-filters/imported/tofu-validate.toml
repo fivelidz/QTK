@@ -1,0 +1,10 @@
+# Imported from rtk-ai/rtk src/filters/tofu-validate.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact OpenTofu validate output"
+
+command = "tofu\\s+validate(\\s|$)"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+# RTK: match_output = [...]  (multi-line; not yet supported by QTK — review)

@@ -1,0 +1,14 @@
+# Imported from rtk-ai/rtk src/filters/yamllint.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact yamllint output — strip blank lines, limit rows"
+
+command = "yamllint"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^\\s*$",
+]
+truncate = 50
+# RTK: truncate_lines_at = 120  (not yet supported by QTK — review)

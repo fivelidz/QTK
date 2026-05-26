@@ -1,0 +1,20 @@
+# Imported from rtk-ai/rtk src/filters/skopeo.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact skopeo output — truncate large manifests, strip verbosity"
+
+command = "skopeo"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^\\s*$",
+  "^Getting image source signatures",
+  "^Copying blob",
+  "^Copying config",
+  "^Writing manifest",
+  "^Storing signatures",
+]
+truncate = 30
+# RTK: truncate_lines_at = 120  (not yet supported by QTK — review)
+on_empty = "skopeo: ok"

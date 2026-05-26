@@ -1,0 +1,18 @@
+# Imported from rtk-ai/rtk src/filters/terraform-plan.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact Terraform plan output"
+
+command = "terraform\\s+plan"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^Refreshing state",
+  "^\\s*#.*unchanged",
+  "^\\s*$",
+  "^Acquiring state lock",
+  "^Releasing state lock",
+]
+truncate = 80
+on_empty = "terraform plan: no changes detected"

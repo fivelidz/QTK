@@ -1,0 +1,16 @@
+# Imported from rtk-ai/rtk src/filters/ty.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact ty type checker output — strip blank lines, keep errors"
+
+command = "ty"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^\\s*$",
+  "^Checking \\d+ file",
+  "^ty \\d+\\.\\d+",
+]
+truncate = 50
+on_empty = "ty: ok"

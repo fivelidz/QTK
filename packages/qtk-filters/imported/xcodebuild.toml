@@ -1,0 +1,44 @@
+# Imported from rtk-ai/rtk src/filters/xcodebuild.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact xcodebuild output — strip build phases, keep errors/warnings/summary"
+
+command = "xcodebuild"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^\\s*$",
+  "^CompileC\\s",
+  "^CompileSwift\\s",
+  "^Ld\\s",
+  "^CreateBuildDirectory\\s",
+  "^MkDir\\s",
+  "^ProcessInfoPlistFile\\s",
+  "^CopySwiftLibs\\s",
+  "^CodeSign\\s",
+  "^Signing Identity:",
+  "^RegisterWithLaunchServices",
+  "^Validate\\s",
+  "^ProcessProductPackaging",
+  "^Touch\\s",
+  "^LinkStoryboards",
+  "^CompileStoryboard",
+  "^CompileAssetCatalog",
+  "^GenerateDSYMFile",
+  "^PhaseScriptExecution",
+  "^PBXCp\\s",
+  "^SetMode\\s",
+  "^SetOwnerAndGroup\\s",
+  "^Ditto\\s",
+  "^CpResource\\s",
+  "^CpHeader\\s",
+  "^\\s+cd\\s+/",
+  "^\\s+export\\s",
+  "^\\s+/Applications/Xcode",
+  "^\\s+/usr/bin/",
+  "^\\s+builtin-",
+  "^note: Using new build system",
+]
+truncate = 60
+on_empty = "xcodebuild: ok"

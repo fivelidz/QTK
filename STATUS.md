@@ -2,23 +2,44 @@
 
 **Last updated:** 2026-05-26
 
-## Public release — v0.3.0 ready
+## Public release — v0.3.0 SHIPPED
 
-Initial public release prepared:
+QTK is live at https://github.com/fivelidz/QTK and surfaced on qalarc.com.
 
 - ✅ Repo fully sanitized for public visibility (no secrets, no personal paths)
+- ✅ Renamed to "Qalarc Token Killer" with "Quantised Token Killer" backronym
 - ✅ Reframed as opencode plugin (not qalcode2-specific) — works on any
   `@opencode-ai/plugin`-compatible host
 - ✅ README rewritten as a launch document with concrete savings numbers,
-  install steps, and architecture diagram
-- ✅ Project entry added to qalarc.com `projects.json` (slug: `qtk`,
-  category: "Developer Tools / AI Infrastructure", featured)
-- ✅ Two-post blog launch: `qtk-layman.html` + `qtk-technical.html` under
-  `posts/ai-systems/` on qalarc.ai/blog (built and verified)
-- ✅ Local git repo initialized, single coherent initial commit,
-  tagged `v0.3.0`
-- 🟡 Awaiting user confirmation to push to GitHub
-- 🟡 Awaiting user confirmation to deploy qalarc-blog with the new posts
+  cost figures, install steps, and architecture diagram
+- ✅ Project entry **live** at qalarc.com/projects/project/?slug=qtk
+- ✅ Two blog posts **live** on qalarc.com/blog (layman + technical)
+- ✅ GitHub repo at github.com/fivelidz/QTK is public, MIT-licensed
+- ✅ v0.3.0 tagged + released with full RTK attribution in release notes
+- ✅ RTK credit is prominent in: README "Read this first" block, LICENSE
+  (full Apache-2.0 NOTICE + names), docs/RTK-COMPARISON.md, blog posts,
+  release notes, GitHub topic `rtk-derivative`, repo description, and
+  index.ts header comment
+- ✅ Cost-aware analytics: `pricing.ts` with model rates table,
+  `savings-export.ts` writing `<project>/.opencode/qtk-savings.json`,
+  `qtk gain` CLI emitting USD-saved columns
+- ✅ gmux integration shipped across 3 surfaces:
+  - tmux status bar widget (`⊟ 855.7k $2.57`)
+  - Phone PWA card row
+  - Tauri desktop UI per-pane HW section + perf strip
+- ✅ **All 59 RTK filters bulk-imported** into `packages/qtk-filters/imported/`
+  with full Apache-2.0 attribution per file; 59/59 validate as QTK specs
+- ✅ GitHub Actions CI: TS typecheck+test+build, Rust fmt+clippy+test,
+  full integration test that spawns the real Rust binary, benchmark
+  dry runs (`.github/workflows/ci.yml`)
+- ✅ GitHub Actions release pipeline: on tag push, cross-builds qtk-core
+  for `x86_64-unknown-linux-musl`, `aarch64-unknown-linux-musl`,
+  `x86_64-apple-darwin`, `aarch64-apple-darwin`, plus the TS bundle,
+  attaches all to the GitHub release (`.github/workflows/release.yml`)
+- ✅ `qtk-core --help` / `--version` / `--list-compressors` flags added
+- ✅ Community files: issue templates (bug + feature), PR template,
+  FUNDING.yml (redirects to RTK), top-level SECURITY.md with
+  coordinated-disclosure policy, CHANGELOG.md
 
 ### Vital stats
 

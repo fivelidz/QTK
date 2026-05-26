@@ -1,0 +1,18 @@
+# Imported from rtk-ai/rtk src/filters/composer-install.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact composer install/update/require output — strip downloads, short-circuit when up-to-date"
+
+command = "composer\\s+(install|update|require)"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^\\s*$",
+  "^  - Downloading ",
+  "^  - Installing ",
+  "^Loading composer",
+  "^Updating dependencies",
+]
+# RTK: match_output = [...]  (multi-line; not yet supported by QTK — review)
+truncate = 30

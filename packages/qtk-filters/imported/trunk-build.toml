@@ -1,0 +1,20 @@
+# Imported from rtk-ai/rtk src/filters/trunk-build.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact trunk build output"
+
+command = "trunk\\s+build"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^\\s*$",
+  "^\\s*Compiling\\s",
+  "^\\s*Downloading\\s",
+  "^\\s*Fetching\\s",
+  "^\\s*Fresh\\s",
+  "^\\s*Checking\\s",
+]
+tail_lines = 10
+truncate = 30
+on_empty = "trunk build: ok"

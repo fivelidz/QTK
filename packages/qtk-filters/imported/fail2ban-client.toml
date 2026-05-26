@@ -1,0 +1,10 @@
+# Imported from rtk-ai/rtk src/filters/fail2ban-client.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact fail2ban-client output"
+
+command = "fail2ban-client"
+strip = ["^\\s*$"]
+truncate = 30

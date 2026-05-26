@@ -1,0 +1,17 @@
+# Imported from rtk-ai/rtk src/filters/uv-sync.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact uv sync/pip install output — strip downloads, short-circuit when up-to-date"
+
+command = "uv\\s+(sync|pip\\s+install)"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^\\s*$",
+  "^\\s+Downloading ",
+  "^\\s+Using cached ",
+  "^\\s+Preparing ",
+]
+# RTK: match_output = [...]  (multi-line; not yet supported by QTK — review)
+truncate = 20

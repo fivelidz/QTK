@@ -1,0 +1,17 @@
+# Imported from rtk-ai/rtk src/filters/shopify-theme.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact shopify theme push/pull output"
+
+command = "shopify\\s+theme\\s+(push|pull)"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^\\s*$",
+  "^\\s*Uploading",
+  "^\\s*Downloading",
+]
+tail_lines = 5
+truncate = 15
+on_empty = "shopify theme: ok"

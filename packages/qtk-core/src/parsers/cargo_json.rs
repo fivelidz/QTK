@@ -116,7 +116,10 @@ pub fn compress(input: &str) -> String {
     const MAX_DIAG: usize = 20;
     for (i, e) in errors.iter().enumerate() {
         if i >= MAX_DIAG {
-            out.push_str(&format!("  ... +{} more error(s)\n", errors.len() - MAX_DIAG));
+            out.push_str(&format!(
+                "  ... +{} more error(s)\n",
+                errors.len() - MAX_DIAG
+            ));
             break;
         }
         out.push_str("ERROR ");
@@ -127,7 +130,10 @@ pub fn compress(input: &str) -> String {
         // Only show warnings if no errors (otherwise warnings are noise)
         for (i, w) in warnings.iter().enumerate() {
             if i >= MAX_DIAG {
-                out.push_str(&format!("  ... +{} more warning(s)\n", warnings.len() - MAX_DIAG));
+                out.push_str(&format!(
+                    "  ... +{} more warning(s)\n",
+                    warnings.len() - MAX_DIAG
+                ));
                 break;
             }
             out.push_str("WARN ");

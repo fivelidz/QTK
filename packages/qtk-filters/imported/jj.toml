@@ -1,0 +1,16 @@
+# Imported from rtk-ai/rtk src/filters/jj.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact Jujutsu (jj) output — strip blank lines, truncate"
+
+command = "jj"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^\\s*$",
+  "^Hint:",
+  "^Working copy now at:",
+]
+truncate = 30
+# RTK: truncate_lines_at = 120  (not yet supported by QTK — review)

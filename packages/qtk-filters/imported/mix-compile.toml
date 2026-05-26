@@ -1,0 +1,16 @@
+# Imported from rtk-ai/rtk src/filters/mix-compile.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact mix compile output"
+
+command = "mix\\s+compile(\\s|$)"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^Compiling \\d+ file",
+  "^\\s*$",
+  "^Generated\\s",
+]
+truncate = 40
+on_empty = "mix compile: ok"

@@ -1,0 +1,112 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+# Cancel in-flight runs on the same ref when a newer push comes in.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ─── TypeScript: typecheck + tests + bundle build ──────────────────────
+  ts:
+    name: TypeScript (typecheck + test + build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.6"
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Typecheck
+        run: bun x tsc --noEmit
+      - name: Run tests (no sidecar binary — sidecar tests auto-skip)
+        run: bun test
+        env:
+          CI: "1"
+      - name: Build bundle
+        run: bun --cwd packages/qtk-plugin run build
+      - name: Verify bundle size
+        run: |
+          set -eu
+          SIZE=$(stat -c%s packages/qtk-plugin/dist/index.js)
+          echo "Bundle size: ${SIZE} bytes"
+          # Soft cap: warn if >150KB so we notice bloat in PRs
+          if [ "$SIZE" -gt 153600 ]; then
+            echo "::warning::Bundle exceeded 150KB soft cap (${SIZE} bytes)"
+          fi
+
+  # ─── Rust: cargo build + test + clippy ─────────────────────────────────
+  rust:
+    name: Rust (build + test + clippy)
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - name: Cache cargo registry + target
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            packages/qtk-core/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('packages/qtk-core/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+      - name: Check formatting
+        working-directory: packages/qtk-core
+        run: cargo fmt --all -- --check
+      - name: Clippy (warnings allowed at warn level, but must not fail)
+        working-directory: packages/qtk-core
+        run: cargo clippy --release --all-targets -- -D warnings
+        continue-on-error: false
+      - name: Build release binary
+        working-directory: packages/qtk-core
+        run: cargo build --release
+      - name: Run unit tests
+        working-directory: packages/qtk-core
+        run: cargo test --release
+
+  # ─── Integration: TS tests WITH the real Rust binary built ────────────
+  integration:
+    name: Integration (TS + spawned Rust sidecar)
+    needs: [ts, rust]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.6"
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Cache cargo target
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            packages/qtk-core/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('packages/qtk-core/Cargo.lock') }}
+      - name: Install deps
+        run: bun install --frozen-lockfile
+      - name: Build sidecar binary
+        working-directory: packages/qtk-core
+        run: cargo build --release
+      - name: Run all tests (sidecar tests will now ACTIVATE)
+        run: bun test
+      - name: Run sidecar throughput benchmark
+        run: bun run scripts/benchmark-sidecar.ts --iters=500
+      - name: Run TS compressor benchmark
+        run: bun run scripts/benchmark.ts --iters=100

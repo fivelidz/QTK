@@ -1,0 +1,18 @@
+# Imported from rtk-ai/rtk src/filters/biome.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact Biome lint/format output — strip blank lines, keep diagnostics"
+
+command = "biome"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^\\s*$",
+  "^Checked \\d+ file",
+  "^Fixed \\d+ file",
+  "^The following command",
+  "^Run it with",
+]
+truncate = 50
+on_empty = "biome: ok"

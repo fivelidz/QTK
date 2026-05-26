@@ -133,9 +133,7 @@ pub fn compress(input: &str) -> String {
         .saturating_sub(total_failures)
         .saturating_sub(total_errors)
         .saturating_sub(total_skipped);
-    out.push_str(&format!(
-        "{passed}/{total_tests} passed",
-    ));
+    out.push_str(&format!("{passed}/{total_tests} passed",));
     if total_failures > 0 {
         out.push_str(&format!(", {total_failures} failed"));
     }
@@ -414,8 +412,10 @@ mod tests {
 
     #[test]
     fn caps_many_failures() {
-        let mut xml = String::from(r#"<?xml version="1.0"?>
-<testsuites><testsuite name="big" tests="100" failures="50" errors="0" skipped="0">"#);
+        let mut xml = String::from(
+            r#"<?xml version="1.0"?>
+<testsuites><testsuite name="big" tests="100" failures="50" errors="0" skipped="0">"#,
+        );
         for i in 0..50 {
             xml.push_str(&format!(
                 r#"<testcase classname="big" name="case_{i}"><failure message="boom {i}"/></testcase>"#,

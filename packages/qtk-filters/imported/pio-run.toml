@@ -1,0 +1,22 @@
+# Imported from rtk-ai/rtk src/filters/pio-run.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact PlatformIO build output"
+
+command = "pio\\s+run"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^\\s*$",
+  "^Verbose mode",
+  "^CONFIGURATION:",
+  "^LDF:",
+  "^Library Manager:",
+  "^Compiling\\s",
+  "^Linking\\s",
+  "^Building\\s",
+  "^Checking size",
+]
+truncate = 30
+on_empty = "pio run: ok"

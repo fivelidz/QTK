@@ -1,0 +1,18 @@
+# Imported from rtk-ai/rtk src/filters/poetry-install.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact poetry install/lock/update output — strip downloads, short-circuit when up-to-date"
+
+command = "poetry\\s+(install|lock|update)"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^\\s*$",
+  "^  [-•] Downloading ",
+  "^  [-•] Installing .* \\(",
+  "^Creating virtualenv",
+  "^Using virtualenv",
+]
+# RTK: match_output = [...]  (multi-line; not yet supported by QTK — review)
+truncate = 30

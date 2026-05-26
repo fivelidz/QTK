@@ -1,0 +1,23 @@
+# Imported from rtk-ai/rtk src/filters/spring-boot.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact Spring Boot output — strip banner and verbose startup logs, keep key events"
+
+command = "(mvn\\s+spring-boot:run|java\\s+-jar.*\\.jar|gradle\\s+.*bootRun)"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+keep_lines_matching = [
+  "Started\\s.*\\sin\\s",
+  "Tomcat started on port",
+  "ERROR",
+  "WARN",
+  "Exception",
+  "Caused by:",
+  "Application run failed",
+  "BUILD\\s",
+  "Tests run:",
+  "FAILURE",
+  "listening on port",
+]
+truncate = 30

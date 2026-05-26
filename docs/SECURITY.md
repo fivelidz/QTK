@@ -252,3 +252,52 @@ compressors. Two reasons:
 2. A type-checked TS compressor is faster to iterate on for the initial
    batch of high-value filters. Phase 2 then adds the DSL for community/user
    filters.
+
+
+---
+
+## Reporting a vulnerability
+
+If you find a security issue in QTK, please **do not** open a public GitHub
+issue. Instead, email the maintainer at the address listed on the GitHub
+profile (`@fivelidz`) or open a private security advisory at:
+
+  https://github.com/fivelidz/QTK/security/advisories/new
+
+Please include:
+
+- A description of the issue and which file(s) / functions are affected
+- A minimal reproduction (a TOML filter, a tool output, or a sidecar
+  request that triggers the problem)
+- The expected vs actual behaviour
+- Whether you 're happy to be credited in the eventual fix announcement
+
+We commit to:
+
+- Acknowledging the report within 7 days
+- Providing an initial assessment within 14 days
+- Disclosing fixed vulnerabilities in `CHANGELOG.md` and (if appropriate)
+  in a GitHub Security Advisory once a fix has shipped
+
+QTK is a small single-maintainer project. We do not have a bug-bounty
+program, but we will credit good-faith reporters in `CHANGELOG.md` (if
+you want to be named).
+
+### Out of scope
+
+- Issues in opencode itself — please report to upstream
+  (https://github.com/sst/opencode/security)
+- Issues in RTK (which QTK derives some of its DSL design from) —
+  please report to RTK (https://github.com/rtk-ai/rtk/security)
+- Issues in Bun, Rust, quick-xml, serde, regex, or other dependencies —
+  please report to those upstreams directly
+- Reports that boil down to "if the user 's opencode config points at a
+  malicious plugin, the plugin can do bad things" — this is the inherent
+  trust model of opencode plugins and isn't specific to QTK
+
+### Disclosure policy
+
+Default: coordinated disclosure with a 90-day deadline from initial
+acknowledgement. If a fix isn't practical within that window, we'll
+discuss extensions or partial disclosures with the reporter.
+

@@ -1,0 +1,17 @@
+# Imported from rtk-ai/rtk src/filters/dotnet-build.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact dotnet build output — short-circuit on success, strip banners"
+
+command = "dotnet\\s+build"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^\\s*$",
+  "^Microsoft \\(R\\)",
+  "^Copyright \\(C\\)",
+  "^  Determining projects",
+]
+# RTK: match_output = [...]  (multi-line; not yet supported by QTK — review)
+truncate = 40

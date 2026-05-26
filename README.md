@@ -72,9 +72,11 @@ Extrapolated:     ~140k tokens/day · $0.42/day
                   $12.55/month · $152.69/year at current rate
 ```
 
-[![tests](https://img.shields.io/badge/tests-111%20passing-brightgreen)](#tests)
+[![CI](https://github.com/fivelidz/QTK/actions/workflows/ci.yml/badge.svg)](https://github.com/fivelidz/QTK/actions/workflows/ci.yml)
+[![tests](https://img.shields.io/badge/tests-134%20passing-brightgreen)](#tests)
 [![bench](https://img.shields.io/badge/p99%20latency-%3C1.2ms-brightgreen)](#benchmarks)
 [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![downstream of](https://img.shields.io/badge/downstream%20of-RTK-orange)](https://github.com/rtk-ai/rtk)
 
 ---
 

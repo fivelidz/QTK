@@ -1,0 +1,10 @@
+# Imported from rtk-ai/rtk src/filters/mix-format.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact mix format output"
+
+command = "mix\\s+format(\\s|$)"
+on_empty = "mix format: ok"
+truncate = 20

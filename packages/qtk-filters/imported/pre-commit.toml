@@ -1,0 +1,16 @@
+# Imported from rtk-ai/rtk src/filters/pre-commit.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact pre-commit output"
+
+command = "pre-commit"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^\\[INFO\\] Installing environment",
+  "^\\[INFO\\] Once installed this environment will be reused",
+  "^\\[INFO\\] This may take a few minutes",
+  "^\\s*$",
+]
+truncate = 40

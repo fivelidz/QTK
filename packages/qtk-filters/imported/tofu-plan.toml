@@ -1,0 +1,18 @@
+# Imported from rtk-ai/rtk src/filters/tofu-plan.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact OpenTofu plan output"
+
+command = "tofu\\s+plan(\\s|$)"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^Refreshing state",
+  "^\\s*#.*unchanged",
+  "^\\s*$",
+  "^Acquiring state lock",
+  "^Releasing state lock",
+]
+truncate = 80
+on_empty = "tofu plan: no changes detected"

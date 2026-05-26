@@ -1,0 +1,15 @@
+# Imported from rtk-ai/rtk src/filters/make.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact make output"
+
+command = "make"
+strip = [
+  "^make\\[\\d+\\]:",
+  "^\\s*$",
+  "^Nothing to be done",
+]
+truncate = 50
+on_empty = "make: ok"

@@ -168,54 +168,234 @@ async function main() {
   }
 }
 
+// Keys QTK doesn't support yet — drop with a `# RTK:` comment trail.
+// (We keep them visible so a human reviewing the imported file can decide
+// whether to add the feature to QTK or drop the filter.)
+const UNSUPPORTED_KEYS = new Set([
+  "strip_ansi", // QTK passes ANSI through; would need an ansi-strip post-step
+  "truncate_lines_at", // per-line truncate width — QTK doesn't have this
+  "description", // pure metadata; RTK shows it in `rtk gain`
+]);
+
+// Multi-line block keys that we can't drop with a single-line comment —
+// they span multiple lines (typically an array literal). We swallow the
+// whole block (greedy across newlines until balanced) and replace with
+// a `# RTK: ... (multi-line; not yet supported)` marker.
+const UNSUPPORTED_BLOCK_KEYS = new Set([
+  "match_output", // RTK feature: if output matches pattern, replace with message
+  "summary_rules", // similar — pattern → summary
+]);
+
+// Keys we directly translate name → name.
+const KEY_RENAME: Record<string, string> = {
+  match_command: "command",
+  strip_lines_matching: "strip",
+  max_lines: "truncate",
+};
+
 /**
- * Translate an RTK filter TOML to QTK format:
- *   - prepend attribution header
- *   - drop ignored keys
- *   - expand `subcommands = [...]` into a `command` array if present
+ * Translate an RTK filter TOML to QTK format.
+ *
+ * RTK format (as of 2026-05):
+ *
+ *     [filters.helm]
+ *     description = "Compact helm output"
+ *     match_command = "^helm\\b"
+ *     strip_ansi = true
+ *     strip_lines_matching = ["^\\s*$", "^W\\d{4}"]
+ *     truncate_lines_at = 120
+ *     max_lines = 40
+ *
+ *     [[tests.helm]]
+ *     name = "..."
+ *     input = "..."
+ *     expected = "..."
+ *
+ * QTK format we produce:
+ *
+ *     # Imported from rtk-ai/rtk src/filters/helm.toml
+ *     # Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+ *     # and the RTK contributors. Re-distributed under MIT with attribution.
+ *     #
+ *     # RTK description: "Compact helm output"
+ *
+ *     command = "^helm\\b"
+ *     strip = ["^\\s*$", "^W\\d{4}"]
+ *     truncate = 40
+ *     # RTK: strip_ansi = true  (QTK doesn't strip ANSI; codes pass through)
+ *     # RTK: truncate_lines_at = 120  (QTK doesn't truncate per-line width)
+ *
+ * The translation is line-based (not full TOML re-emit) so we preserve
+ * formatting + comments where possible. Errors during translation cause
+ * the filter to be marked `failed` — callers should look at the warning.
  */
 function translateRtkFilter(rtkText: string, name: string): string {
   // Strip BOM if any
-  let text = rtkText.replace(/^\uFEFF/, "");
+  const text = rtkText.replace(/^\uFEFF/, "");
+  const baseName = name.replace(/\.toml$/, "");
 
-  // Drop ignored keys (line-based — simple but effective for one-line keys)
   const lines = text.split("\n");
-  const kept: string[] = [];
+  const out: string[] = [];
   let inMultiline = false;
+  let inTestsSection = false;
+  // Note: inFiltersSection state is implicit — once we see [filters.X]
+  // we just keep promoting keys. The "tests" section is the one we need
+  // to actively skip.
+  let descriptionLine: string | null = null;
+  // When we're inside an unsupported multi-line block, count open/close brackets
+  // until balanced.
+  let bracketBalance = 0;
+  let swallowingBlockKey: string | null = null;
+
   for (const line of lines) {
-    // Track triple-quote state so we don't strip inside a multiline string
+    // Track triple-quote state so we don't process inside a multiline string
     const quoteCount = (line.match(/"""/g) ?? []).length;
     if (quoteCount % 2 === 1) inMultiline = !inMultiline;
 
-    if (!inMultiline) {
-      const keyMatch = line.match(/^\s*([A-Za-z0-9_]+)\s*=/);
-      if (keyMatch && IGNORED_KEYS.has(keyMatch[1]!)) {
-        continue;
+    // If we're mid-swallow of an unsupported block, keep counting brackets
+    if (swallowingBlockKey) {
+      const opens = (line.match(/\[/g) ?? []).length;
+      const closes = (line.match(/\]/g) ?? []).length;
+      bracketBalance += opens - closes;
+      if (bracketBalance <= 0) {
+        out.push(
+          `# RTK: ${swallowingBlockKey} = [...]  (multi-line; not yet supported by QTK — review)`,
+        );
+        swallowingBlockKey = null;
+        bracketBalance = 0;
       }
-      // Expand subcommands → command array. RTK form is e.g.
-      //   command = "kubectl"
-      //   subcommands = ["get pods", "get services"]
-      // We translate to:
-      //   command = ["kubectl get pods", "kubectl get services"]
-      // For now we just rename `subcommands` to a comment — full expansion
-      // would need to know the parent `command` field; we leave it to a
-      // future refinement and keep the line as a comment so it's visible.
-      if (keyMatch && keyMatch[1] === "subcommands") {
-        kept.push("# (RTK subcommands key — review and expand manually)");
-        kept.push("# " + line);
-        continue;
-      }
+      continue;
     }
-    kept.push(line);
+
+    if (inMultiline) {
+      // Don't transform inside a """ block. But ALSO don't keep it if we're
+      // inside a [[tests]] table — that's RTK test data we want to drop.
+      if (!inTestsSection) out.push(line);
+      continue;
+    }
+
+    // Section markers
+    const sectionMatch = line.match(/^\s*\[(\[?[A-Za-z0-9_.-]+\]?)\]\s*$/);
+    if (sectionMatch) {
+      const sec = sectionMatch[1]!;
+      // [filters.<name>] → drop the section header (flatten to top-level)
+      if (/^filters\./.test(sec)) {
+        inTestsSection = false;
+        continue;
+      }
+      // [[tests.<name>]] or [tests.<name>] → drop entire section
+      if (/^\[?tests\./.test(sec)) {
+        inTestsSection = true;
+        continue;
+      }
+      // Unknown section — keep as a passthrough comment so a reviewer can see it
+      out.push(`# (RTK section: ${sec} — review)`);
+      inTestsSection = false;
+      continue;
+    }
+
+    if (inTestsSection) {
+      // Skip everything inside [[tests.NAME]]
+      continue;
+    }
+
+    // Inside [filters.NAME] (or top-level for files that don't use it):
+    // process key = value lines
+    const keyMatch = line.match(/^\s*([A-Za-z0-9_]+)\s*=\s*(.*)$/);
+    if (keyMatch) {
+      const key = keyMatch[1]!;
+      const valuePart = keyMatch[2]!;
+
+      // Skip ignored metadata keys but capture description for the header
+      if (IGNORED_KEYS.has(key)) {
+        if (key === "description") {
+          descriptionLine = valuePart;
+        }
+        continue;
+      }
+
+      // Drop unsupported but mark them visibly
+      if (UNSUPPORTED_KEYS.has(key)) {
+        out.push(
+          `# RTK: ${key} = ${valuePart}  (not yet supported by QTK — review)`,
+        );
+        continue;
+      }
+
+      // Multi-line block keys — start swallowing until we hit a balanced ]
+      if (UNSUPPORTED_BLOCK_KEYS.has(key)) {
+        if (valuePart.includes("[")) {
+          const opens = (valuePart.match(/\[/g) ?? []).length;
+          const closes = (valuePart.match(/\]/g) ?? []).length;
+          bracketBalance = opens - closes;
+          if (bracketBalance > 0) {
+            // multi-line — keep swallowing
+            swallowingBlockKey = key;
+            continue;
+          }
+          // single-line array — fall through to comment-out below
+        }
+        out.push(
+          `# RTK: ${key} = ${valuePart}  (not yet supported by QTK — review)`,
+        );
+        continue;
+      }
+
+      // Rename + emit
+      const newKey = KEY_RENAME[key] ?? key;
+      if (newKey !== key) {
+        out.push(`${newKey} = ${valuePart}`);
+      } else {
+        out.push(line);
+      }
+      continue;
+    }
+
+    // Non-key, non-section line (blank, comment, etc.) — pass through
+    out.push(line);
   }
-  text = kept.join("\n");
 
-  const header = `# Imported from rtk-ai/rtk
-# Original: src/filters/${name}
-# Licensed Apache-2.0; re-distributed under MIT with attribution per LICENSE.
+  // Strip leading/trailing blank lines from body
+  while (out.length && out[0]!.trim() === "") out.shift();
+  while (out.length && out[out.length - 1]!.trim() === "") out.pop();
 
+  const header = `# Imported from rtk-ai/rtk src/filters/${name}
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+${descriptionLine ? `#\n# RTK description: ${descriptionLine}\n` : ""}
 `;
-  return header + text;
+
+  // We MUST have a `command =` after translation, otherwise the filter is
+  // a fragment and won't load. Insert a placeholder + warning if missing.
+  const body = out.join("\n");
+  if (!/^\s*command\s*=/m.test(body)) {
+    return (
+      header +
+      `# WARNING: no command key found after RTK translation.
+# RTK source used [filters.${baseName}] without match_command. Review:
+# original filename: ${name}.
+# Setting placeholder command — edit before use.
+command = "${baseName}"
+${body}
+`
+    );
+  }
+
+  // QTK expects command patterns to be shell prefixes/globs, not anchored
+  // regexes. RTK's match_command is a regex like "^helm\\b" — we strip
+  // the leading "^" and any trailing "\\b" / "\\b\\b" so QTK's literal-prefix
+  // matcher does the right thing. (If anyone wants the full regex semantics
+  // they can edit the file by hand — QTK's DSL doesn't support it.)
+  //
+  // Use a strict regex with greedy capture that stops BEFORE optional \\b
+  // suffix — non-greedy + optional was eating part of the actual command.
+  const transformed = body.replace(
+    /^(command\s*=\s*)"\^((?:[^"\\]|\\.)*?)(?:\\\\b)?"\s*$/m,
+    (_m, lhs, pattern) => `${lhs}"${pattern}"`,
+  );
+
+  return header + transformed + "\n";
 }
 
 main().catch((e) => {

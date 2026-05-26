@@ -1,0 +1,19 @@
+# Imported from rtk-ai/rtk src/filters/gcc.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact gcc/g++ compiler output — strip notes, keep errors and warnings"
+
+command = "g(cc|\\+\\+)"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^\\s*$",
+  "^\\s+\\|\\s*$",
+  "^In file included from",
+  "^\\s+from\\s",
+  "^\\d+ warnings? generated",
+  "^\\d+ errors? generated",
+]
+truncate = 50
+on_empty = "gcc: ok"

@@ -1,0 +1,17 @@
+# Imported from rtk-ai/rtk src/filters/ping.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact ping output — strip per-packet lines, keep summary"
+
+command = "ping"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^PING ",
+  "^Pinging ",
+  "^\\d+ bytes from ",
+  "^Reply from .+: bytes=",
+  "^\\s*$",
+]
+tail_lines = 4

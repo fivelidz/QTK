@@ -92,10 +92,7 @@ pub fn compress(input: &str) -> String {
         return String::new();
     }
     // Quick gate: only fire if it looks like terraform output
-    if !input.contains("Terraform")
-        && !input.contains("Plan:")
-        && !input.contains("resource ")
-    {
+    if !input.contains("Terraform") && !input.contains("Plan:") && !input.contains("resource ") {
         return input.to_string();
     }
 

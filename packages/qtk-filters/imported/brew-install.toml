@@ -1,0 +1,19 @@
+# Imported from rtk-ai/rtk src/filters/brew-install.toml
+# Apache-2.0 © Patrick Szymkowiak, Florian Bruniaux, Adrien Eppling
+# and the RTK contributors. Re-distributed under MIT with attribution
+# per QTK's LICENSE.
+#
+# RTK description: "Compact brew install/upgrade output — strip downloads, short-circuit when already installed"
+
+command = "brew\\s+(install|upgrade)"
+# RTK: strip_ansi = true  (not yet supported by QTK — review)
+strip = [
+  "^\\s*$",
+  "^==> Downloading",
+  "^==> Pouring",
+  "^Already downloaded:",
+  "^###",
+  "^==> Fetching",
+]
+# RTK: match_output = [...]  (multi-line; not yet supported by QTK — review)
+truncate = 20

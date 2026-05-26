@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Looking for general token-compression help?
+    url: https://github.com/rtk-ai/rtk
+    about: |
+      QTK is the opencode-specific spiritual sibling of RTK. If you're using
+      Claude Code, Cursor, Gemini CLI, Copilot, Codex, Windsurf, Cline, Roo Code,
+      OpenClaw, Hermes, Kilo Code, Antigravity — or anything other than opencode —
+      you almost certainly want RTK, not QTK. RTK has 100+ filters across 13 AI
+      coding tools and is the mature, production project.
+  - name: opencode itself
+    url: https://github.com/sst/opencode
+    about: |
+      Issues with opencode (the agent host QTK plugs into) belong upstream.
