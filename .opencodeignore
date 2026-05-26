@@ -1,0 +1,23 @@
+# .opencodeignore — opencode snapshot exclusion for QTK
+# See: ~/projects/OPENCODE_MEMORY/README.md
+
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+target/
+**/target/
+*.tsbuildinfo
+*.log
+*.db
+*.sqlite
+*.sqlite3
+.bun/
+test-results/
+coverage/
+
+# Local dev artefacts
+.opencode/qtk-tee/
+.opencode/qtk-stats.sqlite
+.opencode/qtk-cache.sqlite
+.opencode/qtk-rewrites.log

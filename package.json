@@ -1,0 +1,22 @@
+{
+  "name": "qtk-workspace",
+  "private": true,
+  "type": "module",
+  "description": "Token compression layer for AI coding agents — opencode plugin (and forks)",
+  "license": "MIT",
+  "packageManager": "bun@1.3.6",
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.4.0"
+  },
+  "scripts": {
+    "build": "bun --cwd packages/qtk-plugin run build",
+    "test": "bun --cwd packages/qtk-plugin test",
+    "bench": "bun run scripts/benchmark.ts",
+    "install-into-opencode": "bun run scripts/install-into-opencode.ts",
+    "import-rtk-filters": "bun run scripts/import-rtk-filters.ts"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "@qtk/plugin",
+  "version": "0.1.0",
+  "description": "opencode plugin: deterministic, in-process token compression for tool outputs",
+  "type": "module",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./compressors/*": "./src/compressors/*.ts",
+    "./tools/*": "./src/tools/*.ts"
+  },
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "bun build src/index.ts --outdir dist --target bun",
+    "test": "bun test",
+    "typecheck": "bun x tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@opencode-ai/plugin": "^1.1.0"
+  },
+  "devDependencies": {
+    "@opencode-ai/plugin": "^1.1.21",
+    "@types/bun": "latest",
+    "typescript": "^5.4.0"
+  },
+  "license": "MIT"
+}

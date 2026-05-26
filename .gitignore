@@ -1,0 +1,23 @@
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+*.tsbuildinfo
+.DS_Store
+*.log
+*.db
+*.sqlite
+*.sqlite3
+.bun/
+target/
+**/target/
+
+# Test outputs
+test-results/
+coverage/
+
+# Local dev
+.opencode/qtk-tee/
+.opencode/qtk-stats.sqlite
+.opencode/qtk-cache.sqlite
+.opencode/qtk-rewrites.log

@@ -1,0 +1,26 @@
+On branch qalcode-offline-improvements
+Your branch is up to date with 'origin/qalcode-offline-improvements'.
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	modified:   packages/opencode/src/agent/agent.ts
+	new file:   packages/opencode/src/cli/cmd/tui/context/voice.tsx
+	modified:   packages/opencode/src/plugin/index.ts
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   AGENTS.md
+	modified:   MAINTENANCE.md
+	modified:   packages/opencode/src/session/prompt.ts
+	modified:   packages/opencode/src/tool/bash.ts
+	deleted:    archive/old-thing.ts
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	docs/AUTH-AND-PERMISSIONS.md
+	docs/local-models/
+	vram_monitor.py
+	FINAL-SUMMARY.md
+
+no changes added to commit (use "git add" and/or "git commit -a")

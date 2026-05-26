@@ -1,0 +1,9 @@
+# Imported from rtk-ai/rtk
+# Original: src/filters/sample.toml
+# Licensed Apache-2.0; re-distributed under MIT with attribution per LICENSE.
+
+# Sample RTK filter for testing import
+command = "git status --short"
+match = "^(?<flags>\\S+)\\s+(?<file>.+)$"
+group_by = "flags"
+template = "{flags}: {n}"
