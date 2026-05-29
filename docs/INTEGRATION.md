@@ -18,10 +18,87 @@ In the snippets below, replace `$QTK` with the path to your QTK checkout and
 
 ---
 
-## Install method 1 — symlink (recommended for dev)
+## Install method 1 — npm (recommended for most users)
 
-This is the path during active QTK development. Changes to QTK's source are
-picked up by opencode on the next session start.
+The QTK plugin is published to npm as
+[`@qalarc/qtk-plugin`](https://www.npmjs.com/package/@qalarc/qtk-plugin).
+This is the quickest install path and the one you should use unless you
+have a specific reason not to.
+
+```bash
+cd "$OC"
+bun add @qalarc/qtk-plugin
+# or: npm install @qalarc/qtk-plugin
+# or: pnpm add @qalarc/qtk-plugin
+```
+
+Then add to `.opencode/opencode.jsonc`:
+
+```jsonc
+{
+  "plugin": [
+    "@qalarc/qtk-plugin"
+  ]
+}
+```
+
+Restart opencode. For the optional Rust sidecar, see Install method 2 below.
+
+To upgrade: `bun update @qalarc/qtk-plugin` (picks up the latest 0.x release).
+
+## Install method 2 — prebuilt release artifact
+
+If you don't want a Node-style package install, drop the prebuilt files
+directly into your opencode project's plugin directory. This is what we
+recommend for the optional Rust sidecar regardless of how you installed
+the plugin.
+
+```bash
+# Plugin bundle (universal — any OS, any arch)
+mkdir -p "$OC/.opencode/plugin"
+curl -L -o "$OC/.opencode/plugin/qtk.js" \
+    https://github.com/qalarc/QTK/releases/latest/download/qtk-plugin.js
+
+# Optional: Rust sidecar binary (pick your platform)
+case "$(uname -sm)" in
+  "Linux x86_64")  ARTIFACT=qtk-core-x86_64-unknown-linux-musl ;;
+  "Linux aarch64") ARTIFACT=qtk-core-aarch64-unknown-linux-musl ;;
+  "Darwin x86_64") ARTIFACT=qtk-core-x86_64-apple-darwin ;;
+  "Darwin arm64")  ARTIFACT=qtk-core-aarch64-apple-darwin ;;
+esac
+curl -L -o "$OC/.opencode/plugin/qtk-core" \
+    https://github.com/qalarc/QTK/releases/latest/download/$ARTIFACT
+chmod +x "$OC/.opencode/plugin/qtk-core"
+
+# Then register in opencode.jsonc:
+#   "plugin": [ ..., "file://.opencode/plugin/qtk.js" ]
+```
+
+If you installed via npm (method 1), you don't need to copy `qtk.js` —
+opencode picks it up from `node_modules`. You only need the sidecar
+binary download in that case.
+
+## Install method 3 — automated installer (build from source)
+
+A convenience script lives at `scripts/install-into-opencode.ts`. Pass
+the path to your opencode project root:
+
+```bash
+cd "$QTK"
+bun run scripts/install-into-opencode.ts "$OC"
+
+# To remove:
+bun run scripts/install-into-opencode.ts "$OC" --uninstall
+```
+
+The script symlinks the plugin and patches `.opencode/opencode.jsonc`
+(creating a `.bak` first). Recommended for active QTK development where
+you want changes to QTK's source picked up on the next session start.
+
+## Install method 4 — symlink (for QTK contributors)
+
+Same as method 3 but manual, useful if you don't trust automated config
+edits or want to understand the moving parts.
 
 ```bash
 # 1. Build qtk-plugin (creates dist/index.js)
@@ -37,48 +114,6 @@ ln -sfn "$QTK/packages/qtk-plugin" "$OC/.opencode/plugin/qtk"
 #       "file://.opencode/plugin/qtk/src/index.ts"
 
 # 4. Restart opencode
-```
-
-## Install method 2 — single-file (recommended once stable)
-
-Once QTK is stable in your workflow, copy the built bundle directly. Less
-coupling to QTK's source tree.
-
-```bash
-cd "$QTK"
-bun run build
-cp packages/qtk-plugin/dist/index.js "$OC/.opencode/plugin/qtk.js"
-
-# Then in opencode.jsonc:
-#   "file://.opencode/plugin/qtk.js"
-```
-
-## Install method 3 — automated installer
-
-A convenience script lives at `scripts/install-into-opencode.ts`. Pass the
-path to your opencode project root:
-
-```bash
-cd "$QTK"
-bun run scripts/install-into-opencode.ts "$OC"
-
-# To remove:
-bun run scripts/install-into-opencode.ts "$OC" --uninstall
-```
-
-The script symlinks the plugin and patches `.opencode/opencode.jsonc`
-(creating a `.bak` first).
-
-## Install method 4 — npm (eventually)
-
-Once published:
-
-```bash
-cd "$OC"
-bun add @qalarc/qtk-plugin
-
-# In opencode.jsonc:
-#   "@qalarc/qtk-plugin"
 ```
 
 ---

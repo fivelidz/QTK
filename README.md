@@ -73,7 +73,8 @@ Extrapolated:     ~140k tokens/day · $0.42/day
 ```
 
 [![CI](https://github.com/qalarc/QTK/actions/workflows/ci.yml/badge.svg)](https://github.com/qalarc/QTK/actions/workflows/ci.yml)
-[![tests](https://img.shields.io/badge/tests-134%20passing-brightgreen)](#tests)
+[![npm](https://img.shields.io/npm/v/@qalarc/qtk-plugin?label=%40qalarc%2Fqtk-plugin)](https://www.npmjs.com/package/@qalarc/qtk-plugin)
+[![tests](https://img.shields.io/badge/tests-137%20passing-brightgreen)](#tests)
 [![bench](https://img.shields.io/badge/p99%20latency-%3C1.2ms-brightgreen)](#benchmarks)
 [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![downstream of](https://img.shields.io/badge/downstream%20of-RTK-orange)](https://github.com/rtk-ai/rtk)
@@ -235,6 +236,51 @@ NDJSON protocol over stdin/stdout (one JSON object per line). Long-lived subproc
 
 ## Install
 
+### Quickest path — npm (recommended for most users)
+
+```bash
+cd /path/to/your/opencode-project
+bun add @qalarc/qtk-plugin
+```
+
+Then add to `.opencode/opencode.jsonc`:
+
+```jsonc
+{
+  "plugin": [
+    "@qalarc/qtk-plugin"
+  ]
+}
+```
+
+Restart opencode. Done. For the optional Rust sidecar that handles heavy
+parsers (JUnit XML, terraform plan, kubectl YAML/JSON, cargo JSON),
+download the prebuilt binary for your platform from
+[releases](https://github.com/qalarc/QTK/releases/latest) — the plugin
+auto-detects it.
+
+### Prebuilt binary release (no Rust toolchain needed)
+
+```bash
+QC=/path/to/your/opencode-project
+
+# Plugin bundle (universal)
+mkdir -p "$QC/.opencode/plugin"
+curl -L -o "$QC/.opencode/plugin/qtk.js" \
+    https://github.com/qalarc/QTK/releases/latest/download/qtk-plugin.js
+
+# Optional: Rust sidecar binary (pick your platform)
+# Linux x86_64:
+curl -L -o "$QC/.opencode/plugin/qtk-core" \
+    https://github.com/qalarc/QTK/releases/latest/download/qtk-core-x86_64-unknown-linux-musl
+chmod +x "$QC/.opencode/plugin/qtk-core"
+
+# Then add to .opencode/opencode.jsonc:
+#    "plugin": [ ..., "file://.opencode/plugin/qtk.js" ]
+```
+
+### Build from source (for development)
+
 ```bash
 # 1. Clone + build
 git clone https://github.com/qalarc/QTK
@@ -243,20 +289,7 @@ cd QTK && bun install && bun run build
 # 2. (Optional) Build the Rust sidecar
 cd packages/qtk-core && cargo build --release && cd ../..
 
-# 3. Symlink the plugin into your opencode project
-mkdir -p /path/to/your/opencode-project/.opencode/plugin
-ln -s "$PWD/packages/qtk-plugin" \
-      /path/to/your/opencode-project/.opencode/plugin/qtk
-
-# 4. Add to .opencode/opencode.jsonc:
-#    "plugin": [ ..., "file://.opencode/plugin/qtk/src/index.ts" ]
-
-# 5. Restart opencode
-```
-
-Or use the one-shot installer:
-
-```bash
+# 3. Use the one-shot installer to symlink into your opencode project
 bun run scripts/install-into-opencode.ts /path/to/your/opencode-project
 ```
 

@@ -3,6 +3,10 @@
 > opencode plugin for deterministic, in-process token compression of tool
 > outputs. Downstream of [RTK (rtk-ai/rtk)](https://github.com/rtk-ai/rtk).
 
+[![npm](https://img.shields.io/npm/v/@qalarc/qtk-plugin)](https://www.npmjs.com/package/@qalarc/qtk-plugin)
+[![license](https://img.shields.io/badge/license-MIT-blue)](https://github.com/qalarc/QTK/blob/main/LICENSE)
+[![downstream of](https://img.shields.io/badge/downstream%20of-RTK-orange)](https://github.com/rtk-ai/rtk)
+
 This is the npm-publishable package containing the TypeScript opencode
 plugin. The full project (including the Rust sidecar `qtk-core`, the
 RTK filter import script, and all docs) lives at:
